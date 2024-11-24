@@ -31,7 +31,7 @@ while True:
         (x, y, w, h) = cv2.boundingRect(contour)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         
-    cv2.imshow("Motion Detector", frame)
+    cv2.imshow("Motion Notion", frame)
     
     key = cv2.waitKey(1) & 0xFF
     
@@ -41,6 +41,9 @@ while True:
     if key == ord('r'):
         first_frame = gray_frame
         print("First frame reset!")
+        
+    if cv2.getWindowProperty("Motion Notion", cv2.WND_PROP_VISIBLE) <1:
+        break
 
 cap.release()
 cv2.destroyAllWindows()
