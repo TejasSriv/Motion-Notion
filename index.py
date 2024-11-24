@@ -8,14 +8,23 @@ first_frame = cv2.GaussianBlur(first_frame, (21, 21), 0)
 
 print("Motion Notion started.\n")
 
+frame_counter = 0
+update_interval = 10000
+
 while True:
     ret, frame = cap.read()
     if not ret:
         print("Failed to grab frame.")
         break
     
+    frame_counter+=1
+    
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray_frame = cv2.GaussianBlur(gray_frame, (21, 21), 0)
+    
+    if frame_counter%update_interval == 0:
+        first_frame = gray_frame.copy()
+        print("Background refreshed.")
     
     frame_diff = cv2.absdiff(first_frame, gray_frame)
     
@@ -40,7 +49,7 @@ while True:
     
     if key == ord('r'):
         first_frame = gray_frame
-        print("First frame reset!")
+        print("Background refreshed.")
         
     if cv2.getWindowProperty("Motion Notion", cv2.WND_PROP_VISIBLE) <1:
         break
