@@ -1,5 +1,12 @@
 import cv2
 import datetime
+import logging
+
+logging.basicConfig(
+    filename = "motion_log.txt",
+    level = logging.INFO,
+    format = "%(asctime)s - %(message)s",
+)
 
 cap = cv2.VideoCapture(0)
 
@@ -15,6 +22,7 @@ print("Motion Notion started.\n")
 
 frame_counter = 0
 update_interval = 10000
+motion_count = 0
 
 while True:
     ret, frame = cap.read()
@@ -46,6 +54,10 @@ while True:
         
         (x, y, w, h) = cv2.boundingRect(contour)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        
+    if motion_detected:
+        motion_count+=1
+        logging.info(f"Motion detected! Event #{motion_count}. ")
     
     if motion_detected and not recording:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -81,3 +93,9 @@ if out is not None:
     out.release()
 
 cv2.destroyAllWindows()
+
+summary = f"Motion detection ended. Total events logged: {motion_count}\n"
+with open("motion_summary.txt", "w") as summary_file:
+    summary_file.write(summary)
+
+print(summary)
