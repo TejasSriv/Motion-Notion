@@ -62,16 +62,14 @@ while True:
         (x, y, w, h) = cv2.boundingRect(contour)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         
-    if motion_detected:
-        motion_count+=1
-        logging.info(f"Motion detected! Event #{motion_count}. ")
-    
     if motion_detected and not recording:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         video_path = os.path.join(records_folder, f"motion_{timestamp}.avi")
         out = cv2.VideoWriter(video_path, codec, 20.0, (frame.shape[1], frame.shape[0]))
         recording = True
         print("Recording started")
+        motion_count+=1
+        logging.info(f"Motion detected! Event #{motion_count}. ")
         
     if not motion_detected and recording:
         recording = False
