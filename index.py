@@ -1,9 +1,16 @@
 import cv2
 import datetime
 import logging
+import os
+
+records_folder = "Records"
+if not os.path.exists(records_folder):
+    os.makedirs(records_folder)
+
+log_file = os.path.join(records_folder, "motion_log.txt")
 
 logging.basicConfig(
-    filename = "motion_log.txt",
+    filename = log_file,
     level = logging.INFO,
     format = "%(asctime)s - %(message)s",
 )
@@ -61,7 +68,8 @@ while True:
     
     if motion_detected and not recording:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        out = cv2.VideoWriter(f"motion_{timestamp}.avi", codec, 20.0, (frame.shape[1], frame.shape[0]))
+        video_path = os.path.join(records_folder, f"motion_{timestamp}.avi")
+        out = cv2.VideoWriter(video_path, codec, 20.0, (frame.shape[1], frame.shape[0]))
         recording = True
         print("Recording started")
         
@@ -94,8 +102,9 @@ if out is not None:
 
 cv2.destroyAllWindows()
 
+summary_file = os.path.join(records_folder, "motion_summary.txt")
 summary = f"Motion detection ended. Total events logged: {motion_count}\n"
-with open("motion_summary.txt", "w") as summary_file:
+with open(summary_file, "w") as summary_file:
     summary_file.write(summary)
 
 print(summary)
